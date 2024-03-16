@@ -21,17 +21,17 @@ mod none;
 mod uefi;
 
 #[cfg(any(
-	target_os = "uefi",
-	all(target_arch = "x86_64", target_os = "none", not(feature = "fc"))
+    target_os = "uefi",
+    all(target_arch = "x86_64", target_os = "none", not(feature = "fc"))
 ))]
 extern crate alloc;
 
 #[cfg(target_os = "none")]
 #[doc(hidden)]
 fn _print(args: core::fmt::Arguments<'_>) {
-	use core::fmt::Write;
+    use core::fmt::Write;
 
-	unsafe {
-		console::CONSOLE.write_fmt(args).unwrap();
-	}
+    unsafe {
+        console::CONSOLE.write_fmt(args).unwrap();
+    }
 }
