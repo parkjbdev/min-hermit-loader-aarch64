@@ -96,14 +96,19 @@ pub fn find_kernel() -> &'static [u8] {
         .map(|node| {
             let value = node.strip_prefix("module@").unwrap();
             if let Some(value) = value.strip_prefix("0x") {
+                info!("{}", value);
                 usize::from_str_radix(value, 16).unwrap()
             } else if let Some(value) = value.strip_prefix("0X") {
+                info!("{}", value);
                 usize::from_str_radix(value, 16).unwrap()
             } else {
                 value.parse().unwrap()
             }
         })
         .unwrap();
+
+    info!("{}", module_start);
+    // module_start: 0x48000000 = 1207959552
 
     let header = unsafe {
         &*core::mem::transmute::<*const u8, *const Header>(sptr::from_exposed_addr(module_start))
