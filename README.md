@@ -9,47 +9,12 @@ This project is a loader to run the [Hermit kernel](https://github.com/hermitcor
 ## Building
 
 ```bash
-$ cargo xtask build --target <TARGET> --release
+$ cargo build --release
 ```
 
-With `<TARGET>` being either `x86_64`, `x86_64-uefi`, or `aarch64`.
-
-Afterward, the loader is located at `target/<TARGET>/release/hermit-loader`.
+Afterward, the loader is located at `target/aarch64/release/hermit-loader`.
 
 ## Running
-
-### x86-64
-
-On x86-64 Linux with KVM, you can boot Hermit like this:
-
-```
-$ qemu-system-x86_64 \
-    -enable-kvm \
-    -cpu host \
-    -smp 1 \
-    -m 128M \
-    -device isa-debug-exit,iobase=0xf4,iosize=0x04 \
-    -display none -serial stdio \
-    -kernel <LOADER> \
-    -initrd <APP>
-```
-
-#### No KVM
-
-If you want to emulate x86-64 instead of using KVM, omit `-enable-kvm` and set the CPU explicitly to a model of your choice, for example `-cpu Skylake-Client`.
-
-#### Benchmarking
-
-If you want to benchmark Hermit, make sure to enable the _invariant TSC_ (`invtsc`) feature by setting `-cpu host,migratable=no,+invtsc,enforce`.
-
-#### Providing Arguments
-
-Unikernel arguments can be provided like this:
-
-```
-$ qemu-system-x86_64 ... \
-    -append "[KERNEL_ARGS] [--] [APP_ARGS]"
-```
 
 ### AArch64
 
@@ -127,7 +92,7 @@ Microvms have a smaller memory footprint and a faster boot time.
 To use this VM type, PCI and ACPI support have to be disabled for your app (using `no-default-features`).
 
 ```
-$ qemu-system-x86_64 ... \
+$ qemu-system-aarch64 ... \
     -M microvm,x-option-roms=off,pit=off,pic=off,rtc=on,auto-kernel-cmdline=off \
     -nodefaults -no-user-config \
     -append "-freq 2800"
@@ -168,7 +133,7 @@ Currently, Hermit only supports [Virtio]:
 [Virtio]: https://www.redhat.com/en/blog/introduction-virtio-networking-and-vhost-net
 
 ```
-$ qemu-system-x86_64 ... \
+$ qemu-system-aarch64 ... \
     -netdev tap,id=net0,ifname=tap10,script=no,downscript=no,vhost=on \
     -device virtio-net-pci,netdev=net0,disable-legacy=on
 ```
